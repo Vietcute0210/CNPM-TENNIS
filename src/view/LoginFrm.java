@@ -1,5 +1,9 @@
 package view;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import dao.UserDAO;
+import model.User;
 
 public class LoginFrm extends JFrame {
 
@@ -17,6 +21,32 @@ public class LoginFrm extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
+
+        btnLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                User user = new User();
+                user.setUsername(txtUsername.getText());
+                user.setPassword(new String(txtPassword.getPassword()));
+                
+                UserDAO userDAO = new UserDAO();
+                if (userDAO.checkLogin(user)) {
+                    // Hiển thị ReceptHomeFrm sau khi đăng nhập thành công
+                    new ReceptHomeFrm(user);
+                    dispose(); // Đóng form đăng nhập
+                } else {
+                    JOptionPane.showMessageDialog(LoginFrm.this, "Tài khoản hoặc mật khẩu không đúng!");
+                }
+            }
+        });
+
+        btnCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
         setVisible(true);
     }
 

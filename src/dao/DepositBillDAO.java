@@ -3,7 +3,7 @@ package dao;
 import model.DepositBill;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.Date;
 
 public class DepositBillDAO extends DAO {
     public DepositBillDAO() {
@@ -11,14 +11,13 @@ public class DepositBillDAO extends DAO {
     }
 
     public boolean confirmPayment(DepositBill db) {
-        String sql = "INSERT INTO tblDepositBill (amount, paymentMethod, paymentDate, bookingSlipId, userId) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tblDepositBill (createdDate, deposit, paymentMethod, tblBookingSlipID) VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setDouble(1, db.getAmount());
-            ps.setString(2, db.getPaymentMethod());
-            ps.setTimestamp(3, Timestamp.valueOf(db.getPaymentDate()));
+            ps.setDate(1, Date.valueOf(db.getCreatedDate()));
+            ps.setDouble(2, db.getDeposit());
+            ps.setString(3, db.getPaymentMethod());
             ps.setInt(4, db.getBookingSlip().getId());
-            ps.setInt(5, db.getUser().getId());
             
             ps.executeUpdate();
             return true;

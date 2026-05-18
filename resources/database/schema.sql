@@ -3,78 +3,78 @@ USE db_tennis_booking;
 
 CREATE TABLE tblUser (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(50) NOT NULL,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
     fullName VARCHAR(100),
-    role VARCHAR(50)
+    role VARCHAR(100)
 );
 
 CREATE TABLE tblClient (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(70) NOT NULL,
+    address VARCHAR(100),
     tel VARCHAR(20),
-    email VARCHAR(100),
-    address VARCHAR(255),
-    note TEXT
+    email VARCHAR(30),
+    note VARCHAR(400)
 );
 
 CREATE TABLE tblCourtChain (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    address VARCHAR(255)
+    name VARCHAR(70) NOT NULL,
+    address VARCHAR(100),
+    description VARCHAR(500)
 );
 
 CREATE TABLE tblCourt (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    type VARCHAR(50),
-    price DOUBLE,
-    description TEXT,
-    courtChainId INT,
-    FOREIGN KEY (courtChainId) REFERENCES tblCourtChain(id)
+    name VARCHAR(70) NOT NULL,
+    price FLOAT(10),
+    description VARCHAR(500),
+    status VARCHAR(50),
+    tblCourtChainID INT,
+    FOREIGN KEY (tblCourtChainID) REFERENCES tblCourtChain(id)
 );
 
 CREATE TABLE tblBookingSlip (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    bookingDate DATETIME,
-    totalAmount DOUBLE,
-    selloff DOUBLE,
-    clientId INT,
-    userId INT,
-    FOREIGN KEY (clientId) REFERENCES tblClient(id),
-    FOREIGN KEY (userId) REFERENCES tblUser(id)
+    bookingDay DATE,
+    sellOff FLOAT(10),
+    note VARCHAR(400),
+    tblClientID INT,
+    tblUserID INT,
+    FOREIGN KEY (tblClientID) REFERENCES tblClient(id),
+    FOREIGN KEY (tblUserID) REFERENCES tblUser(id)
 );
 
 CREATE TABLE tblBookedCourt (
     id INT AUTO_INCREMENT PRIMARY KEY,
     startDate DATE,
     endDate DATE,
-    daysOfWeek VARCHAR(50),
-    timeSlot VARCHAR(50),
-    price DOUBLE,
-    bookingSlipId INT,
-    courtId INT,
-    FOREIGN KEY (bookingSlipId) REFERENCES tblBookingSlip(id),
-    FOREIGN KEY (courtId) REFERENCES tblCourt(id)
+    price FLOAT(10),
+    sellOff FLOAT(10),
+    daysOfWeek VARCHAR(40),
+    timeSlot VARCHAR(40),
+    tblCourtID INT,
+    tblBookingSlipID INT,
+    FOREIGN KEY (tblCourtID) REFERENCES tblCourt(id),
+    FOREIGN KEY (tblBookingSlipID) REFERENCES tblBookingSlip(id)
 );
 
 CREATE TABLE tblBookingSession (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    sessionDate DATE,
+    date DATE,
     startTime TIME,
     endTime TIME,
     status VARCHAR(50),
-    bookedCourtId INT,
-    FOREIGN KEY (bookedCourtId) REFERENCES tblBookedCourt(id)
+    tblBookedCourtID INT,
+    FOREIGN KEY (tblBookedCourtID) REFERENCES tblBookedCourt(id)
 );
 
 CREATE TABLE tblDepositBill (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    amount DOUBLE,
-    paymentMethod VARCHAR(50),
-    paymentDate DATETIME,
-    bookingSlipId INT,
-    userId INT,
-    FOREIGN KEY (bookingSlipId) REFERENCES tblBookingSlip(id),
-    FOREIGN KEY (userId) REFERENCES tblUser(id)
+    createdDate DATE,
+    deposit FLOAT(10),
+    paymentMethod VARCHAR(100),
+    tblBookingSlipID INT,
+    FOREIGN KEY (tblBookingSlipID) REFERENCES tblBookingSlip(id)
 );

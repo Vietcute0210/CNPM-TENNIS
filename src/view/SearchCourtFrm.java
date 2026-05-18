@@ -2,12 +2,13 @@ package view;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import dao.CourtDAO;
 import model.Court;
 import model.BookedCourt;
-import model.BookingSlip;
-import view.GeneratedSessionsFrm;
+import model.User;
+
 public class SearchCourtFrm extends JFrame {
     private JPanel mainPanel;
     private com.toedter.calendar.JDateChooser dtStartDate;
@@ -20,8 +21,10 @@ public class SearchCourtFrm extends JFrame {
 
     private CourtDAO courtDAO;
     private List<Court> currentCourts;
+    private User user;
 
-    public SearchCourtFrm() {
+    public SearchCourtFrm(User user) {
+        this.user = user;
         courtDAO = new CourtDAO();
         setContentPane(mainPanel);
         setTitle("SearchCourtView");
@@ -47,7 +50,7 @@ public class SearchCourtFrm extends JFrame {
                 java.util.Date startDate = dtStartDate.getDate();
                 java.util.Date endDate = dtEndDate.getDate();
                 String timeSlot = (String) cmbTimeSlot.getSelectedItem();
-                
+
                 StringBuilder days = new StringBuilder();
                 if(chkT2.isSelected()) days.append("Thứ 2, ");
                 if(chkT3.isSelected()) days.append("Thứ 3, ");
@@ -56,85 +59,108 @@ public class SearchCourtFrm extends JFrame {
                 if(chkT6.isSelected()) days.append("Thứ 6, ");
                 if(chkT7.isSelected()) days.append("Thứ 7, ");
                 if(chkCN.isSelected()) days.append("Chủ nhật, ");
-                
+
                 String daysOfWeek = days.toString();
-                
-                if(startDate != null && endDate != null && !daysOfWeek.isEmpty()) {
-                    currentCourts = courtDAO.searchFreeCourt(startDate, endDate, daysOfWeek, timeSlot);
-                    Object[][] newData = new Object[currentCourts.size()][6];
-                    for(int i=0; i<currentCourts.size(); i++) {
-                        Court c = currentCourts.get(i);
-                        newData[i][0] = c.getName();
-                        newData[i][1] = c.getType();
-                        newData[i][2] = String.format("%,.0fđ", c.getPrice());
-                        newData[i][3] = String.valueOf(c.getAvailableSessionsCount());
-                        newData[i][4] = c.getDescription();
-                        newData[i][5] = false;
-                    }
-                    String[] columns = {"Court ID", "Type", "Price/h", "Total Sessions", "Description", "Select"};
-                    tblResult.setModel(new javax.swing.table.DefaultTableModel(newData, columns) {
-                        @Override
-                        public Class<?> getColumnClass(int col) {
-                            return col == 5 ? Boolean.class : String.class;
-                        }
-                        @Override
-                        public boolean isCellEditable(int row, int col) {
-                            return col == 5;
-                        }
-                    });
+
+                if (startDate == null || endDate == null) {
+                    JOptionPane.showMessageDialog(SearchCourtFrm.this, "Vui lòng chọn ngày bắt đầu và kết thúc!");
+                    return;
                 }
+                if (daysOfWeek.isEmpty()) {
+                    JOptionPane.showMessageDialog(SearchCourtFrm.this, "Vui lòng chọn ít nhất một ngày trong tuần!");
+                    return;
+                }
+
+                currentCourts = courtDAO.searchFreeCourt(startDate, endDate, daysOfWeek, timeSlot);
+
+                if (currentCourts.isEmpty()) {
+                    JOptionPane.showMessageDialog(SearchCourtFrm.this,
+                            "Không tìm thấy sân nào trống theo yêu cầu.\nVui lòng thử lại với ngày hoặc khung giờ khác.",
+                            "Không tìm thấy", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+                Object[][] newData = new Object[currentCourts.size()][6];
+                for(int i=0; i<currentCourts.size(); i++) {
+                    Court c = currentCourts.get(i);
+                    newData[i][0] = c.getName();
+                    newData[i][1] = c.getStatus();
+                    newData[i][2] = String.format("%,.0fđ", c.getPrice());
+                    newData[i][3] = String.valueOf(c.getAvailableSessionsCount());
+                    newData[i][4] = c.getDescription();
+                    newData[i][5] = false; // checkbox chưa chọn
+                }
+                String[] columns = {"Court Name", "Status", "Price/h", "Total Sessions", "Description", "Select"};
+                tblResult.setModel(new javax.swing.table.DefaultTableModel(newData, columns) {
+                    @Override
+                    public Class<?> getColumnClass(int col) {
+                        return col == 5 ? Boolean.class : String.class;
+                    }
+                    @Override
+                    public boolean isCellEditable(int row, int col) {
+                        return col == 5;
+                    }
+                });
             }
         });
 
         btnNext.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Find selected court
-                int selectedRow = -1;
+                if (currentCourts == null || currentCourts.isEmpty()) {
+                    JOptionPane.showMessageDialog(SearchCourtFrm.this, "Vui lòng tìm sân trước!");
+                    return;
+                }
+
+                // Thu thập TẤT CẢ các sân được tích checkbox
+                List<BookedCourt> selectedBookedCourts = new ArrayList<>();
+                String daysOfWeek = buildDaysOfWeek();
+                String timeSlot = (String) cmbTimeSlot.getSelectedItem();
+                java.time.LocalDate startLocal = new java.sql.Date(dtStartDate.getDate().getTime()).toLocalDate();
+                java.time.LocalDate endLocal   = new java.sql.Date(dtEndDate.getDate().getTime()).toLocalDate();
+
                 for (int i = 0; i < tblResult.getRowCount(); i++) {
                     Boolean isChecked = (Boolean) tblResult.getValueAt(i, 5);
                     if (isChecked != null && isChecked) {
-                        selectedRow = i;
-                        break;
+                        Court court = currentCourts.get(i);
+                        BookedCourt bc = new BookedCourt();
+                        bc.setCourt(court);
+                        bc.setPrice(court.getPrice()); // Lấy giá từ sân
+                        bc.setStartDate(startLocal);
+                        bc.setEndDate(endLocal);
+                        bc.setTimeSlot(timeSlot);
+                        bc.setDaysOfWeek(daysOfWeek);
+                        bc.generateSessions(); // Sinh sessions tự động
+                        selectedBookedCourts.add(bc);
                     }
                 }
-                
-                if (selectedRow != -1 && currentCourts != null) {
-                    Court selectedCourt = currentCourts.get(selectedRow);
-                    
-                    BookedCourt bookedCourt = new BookedCourt();
-                    bookedCourt.setCourt(selectedCourt);
-                    bookedCourt.setStartDate(new java.sql.Date(dtStartDate.getDate().getTime()).toLocalDate());
-                    bookedCourt.setEndDate(new java.sql.Date(dtEndDate.getDate().getTime()).toLocalDate());
-                    bookedCourt.setTimeSlot((String) cmbTimeSlot.getSelectedItem());
-                    
-                    StringBuilder days = new StringBuilder();
-                    if(chkT2.isSelected()) days.append("Thứ 2, ");
-                    if(chkT3.isSelected()) days.append("Thứ 3, ");
-                    if(chkT4.isSelected()) days.append("Thứ 4, ");
-                    if(chkT5.isSelected()) days.append("Thứ 5, ");
-                    if(chkT6.isSelected()) days.append("Thứ 6, ");
-                    if(chkT7.isSelected()) days.append("Thứ 7, ");
-                    if(chkCN.isSelected()) days.append("Chủ nhật, ");
-                    bookedCourt.setDaysOfWeek(days.toString());
-                    
-                    // Generate sessions automatically
-                    bookedCourt.generateSessions();
-                    
-                    // Show generated sessions dialog
-                    GeneratedSessionsFrm sessionsFrm = new GeneratedSessionsFrm(SearchCourtFrm.this, bookedCourt);
-                    sessionsFrm.setVisible(true);
-                    dispose(); // close SearchCourtFrm
-                } else {
-                    JOptionPane.showMessageDialog(SearchCourtFrm.this, "Vui lòng chọn một sân!");
+
+                if (selectedBookedCourts.isEmpty()) {
+                    JOptionPane.showMessageDialog(SearchCourtFrm.this, "Vui lòng tích chọn ít nhất một sân!");
+                    return;
                 }
+
+                // Chuyển sang BookingSessionView với danh sách nhiều sân
+                new BookingSessionView(selectedBookedCourts, user);
+                dispose();
             }
         });
 
         setVisible(true);
     }
 
+    private String buildDaysOfWeek() {
+        StringBuilder days = new StringBuilder();
+        if(chkT2.isSelected()) days.append("Thứ 2, ");
+        if(chkT3.isSelected()) days.append("Thứ 3, ");
+        if(chkT4.isSelected()) days.append("Thứ 4, ");
+        if(chkT5.isSelected()) days.append("Thứ 5, ");
+        if(chkT6.isSelected()) days.append("Thứ 6, ");
+        if(chkT7.isSelected()) days.append("Thứ 7, ");
+        if(chkCN.isSelected()) days.append("Chủ nhật, ");
+        return days.toString();
+    }
+
     public static void main(String[] args) {
-        new SearchCourtFrm();
+        new SearchCourtFrm(new User());
     }
 }

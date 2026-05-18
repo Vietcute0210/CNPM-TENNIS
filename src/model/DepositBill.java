@@ -1,27 +1,25 @@
 package model;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class DepositBill implements Serializable {
     private int id;
-    private double amount;
+    private double deposit;
     private String paymentMethod;
-    private LocalDateTime paymentDate;
+    private LocalDate createdDate;
     private BookingSlip bookingSlip;
-    private User user;
 
     public DepositBill() {
         super();
     }
 
-    public DepositBill(double amount, String paymentMethod, LocalDateTime paymentDate, BookingSlip bookingSlip, User user) {
+    public DepositBill(double deposit, String paymentMethod, LocalDate createdDate, BookingSlip bookingSlip) {
         super();
-        this.amount = amount;
+        this.deposit = deposit;
         this.paymentMethod = paymentMethod;
-        this.paymentDate = paymentDate;
+        this.createdDate = createdDate;
         this.bookingSlip = bookingSlip;
-        this.user = user;
     }
 
     public int getId() {
@@ -32,12 +30,12 @@ public class DepositBill implements Serializable {
         this.id = id;
     }
 
-    public double getAmount() {
-        return amount;
+    public double getDeposit() {
+        return deposit;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setDeposit(double deposit) {
+        this.deposit = deposit;
     }
 
     public String getPaymentMethod() {
@@ -48,12 +46,12 @@ public class DepositBill implements Serializable {
         this.paymentMethod = paymentMethod;
     }
 
-    public LocalDateTime getPaymentDate() {
-        return paymentDate;
+    public LocalDate getCreatedDate() {
+        return createdDate;
     }
 
-    public void setPaymentDate(LocalDateTime paymentDate) {
-        this.paymentDate = paymentDate;
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
     }
 
     public BookingSlip getBookingSlip() {
@@ -62,13 +60,5 @@ public class DepositBill implements Serializable {
 
     public void setBookingSlip(BookingSlip bookingSlip) {
         this.bookingSlip = bookingSlip;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

@@ -18,7 +18,7 @@ public class ClientDAO extends DAO {
         // Left join với bảng BookingSlip để đếm số lần đặt sân (lịch sử đặt sân)
         String sql = "SELECT c.*, COUNT(bs.id) AS bookingCount "
                    + "FROM tblClient c "
-                   + "LEFT JOIN tblBookingSlip bs ON c.id = bs.clientId "
+                   + "LEFT JOIN tblBookingSlip bs ON c.id = bs.tblClientID "
                    + "WHERE c.name LIKE ? "
                    + "GROUP BY c.id";
         try {
@@ -57,6 +57,24 @@ public class ClientDAO extends DAO {
             if (generatedKeys.next()) {
                 client.setId(generatedKeys.getInt(1));
                 return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Kiểm tra xem số điện thoại đã tồn tại trên hệ thống chưa
+     */
+    public boolean checkDuplicatePhone(String tel) {
+        String sql = "SELECT id FROM tblClient WHERE tel = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, tel);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return true; // Trùng số điện thoại
             }
         } catch (Exception e) {
             e.printStackTrace();

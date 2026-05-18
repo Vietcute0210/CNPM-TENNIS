@@ -22,7 +22,7 @@ public class BookedCourtTest {
         // 2026-03-01 is Sunday
         // 03-03 (Tue), 03-05 (Thu), 03-10 (Tue), 03-12 (Thu) -> 4 sessions
         assertEquals(4, sessions.size());
-        assertEquals(LocalDate.of(2026, 3, 3), sessions.get(0).getSessionDate());
+        assertEquals(LocalDate.of(2026, 3, 3), sessions.get(0).getDate());
         assertEquals("19:00", sessions.get(0).getStartTime().toString());
         assertEquals("21:00", sessions.get(0).getEndTime().toString());
         assertEquals("Đã đặt", sessions.get(0).getStatus());

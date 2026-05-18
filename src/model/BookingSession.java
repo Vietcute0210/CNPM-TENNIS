@@ -6,7 +6,7 @@ import java.time.LocalTime;
 
 public class BookingSession implements Serializable {
     private int id;
-    private LocalDate sessionDate;
+    private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
     private String status; // VD: "Đã hoàn thành", "Đã đặt", "Đã hủy"
@@ -16,9 +16,9 @@ public class BookingSession implements Serializable {
         super();
     }
 
-    public BookingSession(LocalDate sessionDate, LocalTime startTime, LocalTime endTime, String status, BookedCourt bookedCourt) {
+    public BookingSession(LocalDate date, LocalTime startTime, LocalTime endTime, String status, BookedCourt bookedCourt) {
         super();
-        this.sessionDate = sessionDate;
+        this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
@@ -33,12 +33,12 @@ public class BookingSession implements Serializable {
         this.id = id;
     }
 
-    public LocalDate getSessionDate() {
-        return sessionDate;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setSessionDate(LocalDate sessionDate) {
-        this.sessionDate = sessionDate;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public LocalTime getStartTime() {

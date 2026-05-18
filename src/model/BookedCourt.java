@@ -13,6 +13,7 @@ public class BookedCourt implements Serializable {
     private String daysOfWeek; // VD: "Thứ 3, Thứ 5"
     private String timeSlot; // VD: "19:00 - 21:00"
     private double price;
+    private double sellOff;
     private Court court;
     private BookingSlip bookingSlip;
     private List<BookingSession> sessions;
@@ -22,13 +23,14 @@ public class BookedCourt implements Serializable {
         sessions = new ArrayList<>();
     }
 
-    public BookedCourt(LocalDate startDate, LocalDate endDate, String daysOfWeek, String timeSlot, double price, Court court, BookingSlip bookingSlip) {
+    public BookedCourt(LocalDate startDate, LocalDate endDate, String daysOfWeek, String timeSlot, double price, double sellOff, Court court, BookingSlip bookingSlip) {
         super();
         this.startDate = startDate;
         this.endDate = endDate;
         this.daysOfWeek = daysOfWeek;
         this.timeSlot = timeSlot;
         this.price = price;
+        this.sellOff = sellOff;
         this.court = court;
         this.bookingSlip = bookingSlip;
         this.sessions = new ArrayList<>();
@@ -72,6 +74,22 @@ public class BookedCourt implements Serializable {
             case 6: return "Thứ 7";
             case 7: return "Chủ nhật";
             default: return "";
+        }
+    }
+
+    /**
+     * Tính số giờ của mỗi buổi từ timeSlot. VD: "19:00 - 21:00" -> 2.0
+     */
+    public double getDurationHours() {
+        if (timeSlot == null) return 0;
+        String[] parts = timeSlot.split(" - ");
+        if (parts.length != 2) return 0;
+        try {
+            LocalTime start = LocalTime.parse(parts[0].trim());
+            LocalTime end   = LocalTime.parse(parts[1].trim());
+            return java.time.Duration.between(start, end).toMinutes() / 60.0;
+        } catch (Exception e) {
+            return 0;
         }
     }
 
@@ -121,6 +139,14 @@ public class BookedCourt implements Serializable {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public double getSellOff() {
+        return sellOff;
+    }
+
+    public void setSellOff(double sellOff) {
+        this.sellOff = sellOff;
     }
 
     public Court getCourt() {

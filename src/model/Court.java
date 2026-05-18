@@ -5,9 +5,9 @@ import java.io.Serializable;
 public class Court implements Serializable {
     private int id;
     private String name;
-    private String type;
     private double price;
     private String description;
+    private String status;
     private CourtChain courtChain;
     
     // Thuộc tính bổ sung để chứa thông tin hiển thị (VD: Tổng số buổi)
@@ -17,13 +17,13 @@ public class Court implements Serializable {
         super();
     }
 
-    public Court(int id, String name, String type, double price, String description, CourtChain courtChain) {
+    public Court(int id, String name, double price, String description, String status, CourtChain courtChain) {
         super();
         this.id = id;
         this.name = name;
-        this.type = type;
         this.price = price;
         this.description = description;
+        this.status = status;
         this.courtChain = courtChain;
     }
 
@@ -43,14 +43,6 @@ public class Court implements Serializable {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public double getPrice() {
         return price;
     }
@@ -65,6 +57,14 @@ public class Court implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public CourtChain getCourtChain() {

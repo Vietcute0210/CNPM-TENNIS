@@ -31,19 +31,19 @@ public class CourtDAO extends DAO {
         // giả sử chúng ta tìm sân chưa bị đặt trùng toàn bộ khoảng thời gian.
         String sql = "SELECT c.*, cc.name AS chainName, cc.address AS chainAddress "
                    + "FROM tblCourt c "
-                   + "JOIN tblCourtChain cc ON c.courtChainId = cc.id";
+                   + "JOIN tblCourtChain cc ON c.tblCourtChainID = cc.id";
                    
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                CourtChain cc = new CourtChain(rs.getInt("courtChainId"), rs.getString("chainName"), rs.getString("chainAddress"));
+                CourtChain cc = new CourtChain(rs.getInt("tblCourtChainID"), rs.getString("chainName"), rs.getString("chainAddress"));
                 Court court = new Court();
                 court.setId(rs.getInt("id"));
                 court.setName(rs.getString("name"));
-                court.setType(rs.getString("type"));
                 court.setPrice(rs.getDouble("price"));
                 court.setDescription(rs.getString("description"));
+                court.setStatus(rs.getString("status"));
                 court.setCourtChain(cc);
                 
                 // Demo logic: Check collision in tblBookingSession
@@ -65,9 +65,9 @@ public class CourtDAO extends DAO {
         int count = 0;
         String[] times = timeSlot.split(" - ");
         if(times.length != 2) return 0;
-        String sql = "SELECT COUNT(*) FROM tblBookingSession s "
-                   + "JOIN tblBookedCourt bc ON s.bookedCourtId = bc.id "
-                   + "WHERE bc.courtId = ? AND s.sessionDate >= ? AND s.sessionDate <= ? "
+        String sql = "SELECT s.date FROM tblBookingSession s "
+                   + "JOIN tblBookedCourt bc ON s.tblBookedCourtID = bc.id "
+                   + "WHERE bc.tblCourtID = ? AND s.date >= ? AND s.date <= ? "
                    + "AND s.startTime = ? AND s.endTime = ? AND s.status != 'Đã hủy'";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
@@ -77,8 +77,12 @@ public class CourtDAO extends DAO {
             ps.setTime(4, java.sql.Time.valueOf(times[0].trim() + ":00"));
             ps.setTime(5, java.sql.Time.valueOf(times[1].trim() + ":00"));
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                count = rs.getInt(1);
+            while (rs.next()) {
+                LocalDate date = rs.getDate("date").toLocalDate();
+                String dayStr = getDayOfWeekString(date.getDayOfWeek().getValue());
+                if (daysOfWeek.contains(dayStr)) {
+                    count++;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

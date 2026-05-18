@@ -21,11 +21,11 @@ public class BookingSlipDAO extends DAO {
             con.setAutoCommit(false); // Bắt đầu transaction
             
             // 1. Lưu BookingSlip
-            String sqlSlip = "INSERT INTO tblBookingSlip (bookingDate, totalAmount, selloff, clientId, userId) VALUES (?, ?, ?, ?, ?)";
+            String sqlSlip = "INSERT INTO tblBookingSlip (bookingDay, sellOff, note, tblClientID, tblUserID) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement psSlip = con.prepareStatement(sqlSlip, Statement.RETURN_GENERATED_KEYS);
-            psSlip.setTimestamp(1, Timestamp.valueOf(bs.getBookingDate()));
-            psSlip.setDouble(2, bs.getTotalAmount());
-            psSlip.setDouble(3, bs.getSelloff());
+            psSlip.setDate(1, Date.valueOf(bs.getBookingDay()));
+            psSlip.setDouble(2, bs.getSelloff());
+            psSlip.setString(3, bs.getNote());
             psSlip.setInt(4, bs.getClient().getId());
             psSlip.setInt(5, bs.getUser().getId());
             psSlip.executeUpdate();
@@ -36,15 +36,17 @@ public class BookingSlipDAO extends DAO {
                 
                 // 2. Lưu các BookedCourt
                 for (BookedCourt bc : bs.getBookedCourts()) {
-                    String sqlCourt = "INSERT INTO tblBookedCourt (startDate, endDate, daysOfWeek, timeSlot, price, bookingSlipId, courtId) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    bc.setSellOff(bs.getSelloff()); // Đồng bộ tỷ lệ khuyến mại động từ phiếu vào từng sân đặt
+                    String sqlCourt = "INSERT INTO tblBookedCourt (startDate, endDate, price, sellOff, daysOfWeek, timeSlot, tblCourtID, tblBookingSlipID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                     PreparedStatement psCourt = con.prepareStatement(sqlCourt, Statement.RETURN_GENERATED_KEYS);
                     psCourt.setDate(1, Date.valueOf(bc.getStartDate()));
                     psCourt.setDate(2, Date.valueOf(bc.getEndDate()));
-                    psCourt.setString(3, bc.getDaysOfWeek());
-                    psCourt.setString(4, bc.getTimeSlot());
-                    psCourt.setDouble(5, bc.getPrice());
-                    psCourt.setInt(6, bs.getId());
+                    psCourt.setDouble(3, bc.getPrice());
+                    psCourt.setDouble(4, bc.getSellOff());
+                    psCourt.setString(5, bc.getDaysOfWeek());
+                    psCourt.setString(6, bc.getTimeSlot());
                     psCourt.setInt(7, bc.getCourt().getId());
+                    psCourt.setInt(8, bs.getId());
                     psCourt.executeUpdate();
                     
                     ResultSet rsCourt = psCourt.getGeneratedKeys();
@@ -53,9 +55,9 @@ public class BookingSlipDAO extends DAO {
                         
                         // 3. Lưu các BookingSession
                         for (BookingSession session : bc.getSessions()) {
-                            String sqlSession = "INSERT INTO tblBookingSession (sessionDate, startTime, endTime, status, bookedCourtId) VALUES (?, ?, ?, ?, ?)";
+                            String sqlSession = "INSERT INTO tblBookingSession (date, startTime, endTime, status, tblBookedCourtID) VALUES (?, ?, ?, ?, ?)";
                             PreparedStatement psSession = con.prepareStatement(sqlSession);
-                            psSession.setDate(1, Date.valueOf(session.getSessionDate()));
+                            psSession.setDate(1, Date.valueOf(session.getDate()));
                             psSession.setTime(2, Time.valueOf(session.getStartTime()));
                             psSession.setTime(3, Time.valueOf(session.getEndTime()));
                             psSession.setString(4, session.getStatus());

@@ -19,8 +19,7 @@ public class BookingSlipDAOTest {
     @Test
     public void testAddBookingSlip() {
         BookingSlip bs = new BookingSlip();
-        bs.setBookingDate(LocalDateTime.now());
-        bs.setTotalAmount(150000);
+        bs.setBookingDay(java.time.LocalDate.now());
         bs.setSelloff(0);
         
         Client client = new Client();
