@@ -7,10 +7,6 @@ import view.LoginFrm;
 
 import javax.swing.UIManager;
 
-/**
- *
- * @author HoangHoangTuan
- */
 public class Main {
 
     /**
