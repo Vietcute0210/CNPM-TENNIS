@@ -2,13 +2,14 @@ package model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BookingSlip implements Serializable {
     private int id;
     private LocalDate bookingDay;
-    private double selloff;
+    private double sellOff;
     private String note;
     private Client client;
     private User user;
@@ -19,10 +20,10 @@ public class BookingSlip implements Serializable {
         bookedCourts = new ArrayList<>();
     }
 
-    public BookingSlip(LocalDate bookingDay, double selloff, String note, Client client, User user) {
+    public BookingSlip(LocalDate bookingDay, double sellOff, String note, Client client, User user) {
         super();
         this.bookingDay = bookingDay;
-        this.selloff = selloff;
+        this.sellOff = sellOff;
         this.note = note;
         this.client = client;
         this.user = user;
@@ -45,19 +46,12 @@ public class BookingSlip implements Serializable {
         this.bookingDay = bookingDay;
     }
 
-    /**
-     * Tính tổng tiền động:
-     * Mỗi BookedCourt = price/h * số_giờ_mỗi_buổi * số_buổi * (1 - sellOff_sân)
-     * Tổng cuối = sum * (1 - selloff_phiếu)
-     */
     public double getTotalAmount() {
         double total = 0;
         if (bookedCourts != null) {
             for (BookedCourt bc : bookedCourts) {
-                double hours = bc.getDurationHours();           // số giờ/buổi
-                int    sessions = bc.getSessions().size();       // số buổi
-                // Nếu sân đã được gán sellOff (ví dụ khi load từ DB), ta dùng chính nó.
-                // Nếu chưa gán (ví dụ lúc đang tạo mới), ta lấy theo khuyến mại chung của phiếu.
+                double hours = bc.getDurationHours();
+                int    sessions = bc.getSessions().size();
                 double discount = (bc.getSellOff() > 0) ? bc.getSellOff() : this.getSelloff();
                 double pricePerCourt = bc.getPrice() * hours * sessions * (1 - discount);
                 total += pricePerCourt;
@@ -66,9 +60,6 @@ public class BookingSlip implements Serializable {
         return total;
     }
 
-    /**
-     * Tính tiền đặt cọc (mặc định là 10% của tổng tiền sau khi đã giảm giá)
-     */
     public double getDeposit() {
         return getTotalAmount() * 0.10;
     }
@@ -81,12 +72,6 @@ public class BookingSlip implements Serializable {
         this.note = note;
     }
 
-    /**
-     * Tính tỷ lệ khuyến mại (selloff) tự động dựa trên thời gian thuê của các sân:
-     * - Thuê từ 3 tháng trở lên (Theo Quý): giảm 15% (0.15)
-     * - Thuê từ 1 tháng trở lên (Theo Tháng): giảm 10% (0.10)
-     * - Thuê lẻ tẻ dưới 1 tháng: giảm 0% (0.00)
-     */
     public double getDiscountRate() {
         if (bookedCourts == null || bookedCourts.isEmpty()) {
             return 0.0;
@@ -98,7 +83,7 @@ public class BookingSlip implements Serializable {
         }
         
         // Tính số tháng thuê dương lịch bao phủ
-        long months = java.time.temporal.ChronoUnit.MONTHS.between(bc.getStartDate(), bc.getEndDate().plusDays(1));
+        long months = ChronoUnit.MONTHS.between(bc.getStartDate(), bc.getEndDate().plusDays(1));
         if (months >= 3) {
             return 0.15;
         } else if (months >= 1) {
@@ -113,7 +98,7 @@ public class BookingSlip implements Serializable {
     }
 
     public void setSelloff(double selloff) {
-        this.selloff = selloff;
+        this.sellOff = selloff;
     }
 
     public Client getClient() {

@@ -9,8 +9,7 @@ public class Client implements Serializable {
     private String email;
     private String address;
     private String note;
-    
-    // Thuộc tính bổ sung để chứa thông tin hiển thị (VD: số lần đặt sân)
+
     private int bookingCount;
 
     public Client() {

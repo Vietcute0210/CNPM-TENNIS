@@ -36,7 +36,6 @@ public class ClientInforFrm extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Bảng rỗng lúc đầu
         String[] columns = {"Client ID", "Full Name", "Phone", "Email", "History"};
         tblResult.setModel(new DefaultTableModel(new Object[0][5], columns) {
             @Override
@@ -46,7 +45,6 @@ public class ClientInforFrm extends JFrame {
         });
         tblResult.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Tìm kiếm KH từ DB
         btnSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -77,7 +75,6 @@ public class ClientInforFrm extends JFrame {
             }
         });
 
-        // Mở AddClientFrm khi không tìm thấy KH
         btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -86,7 +83,6 @@ public class ClientInforFrm extends JFrame {
             }
         });
 
-        // Nút Select
         btnSelect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -100,7 +96,6 @@ public class ClientInforFrm extends JFrame {
             }
         });
 
-        // Double-click chọn KH
         tblResult.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -116,9 +111,6 @@ public class ClientInforFrm extends JFrame {
         setVisible(true);
     }
 
-    /**
-     * Tạo BookingSlip với TẤT CẢ các bookedCourts đã chọn, rồi mở ConfirmFrm.
-     */
     public void proceedWithClient(Client client) {
         BookingSlip slip = new BookingSlip();
         slip.setUser(this.user);

@@ -30,7 +30,6 @@ public class BookingSessionView extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
 
-        // Tiêu đề hiển thị tất cả sân đã chọn
         if (lblTitle != null) {
             StringBuilder courtNames = new StringBuilder();
             for (BookedCourt bc : bookedCourts) {
@@ -69,7 +68,6 @@ public class BookingSessionView extends JFrame {
         btnContinue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Truyền danh sách bookedCourts sang ClientInforFrm
                 new ClientInforFrm(user, bookedCourts);
                 dispose();
             }

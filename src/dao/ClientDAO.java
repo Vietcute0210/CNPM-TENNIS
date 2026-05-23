@@ -14,13 +14,13 @@ public class ClientDAO extends DAO {
 
     public List<Client> searchByName(String name) {
         List<Client> list = new ArrayList<>();
-        // Truy vấn tìm kiếm gần đúng bằng LIKE
-        // Left join với bảng BookingSlip để đếm số lần đặt sân (lịch sử đặt sân)
-        String sql = "SELECT c.*, COUNT(bs.id) AS bookingCount "
-                   + "FROM tblClient c "
-                   + "LEFT JOIN tblBookingSlip bs ON c.id = bs.tblClientID "
-                   + "WHERE c.name LIKE ? "
-                   + "GROUP BY c.id";
+        String sql = """
+                SELECT c.*, COUNT(bs.id) AS bookingCount
+                FROM tblClient c
+                LEFT JOIN tblBookingSlip bs ON c.id = bs.tblClientID
+                WHERE c.name LIKE ?
+                GROUP BY c.id
+                """;
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, "%" + name + "%");
@@ -64,9 +64,6 @@ public class ClientDAO extends DAO {
         return false;
     }
 
-    /**
-     * Kiểm tra xem số điện thoại đã tồn tại trên hệ thống chưa
-     */
     public boolean checkDuplicatePhone(String tel) {
         String sql = "SELECT id FROM tblClient WHERE tel = ?";
         try {
@@ -74,7 +71,7 @@ public class ClientDAO extends DAO {
             ps.setString(1, tel);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return true; // Trùng số điện thoại
+                return true;
             }
         } catch (Exception e) {
             e.printStackTrace();

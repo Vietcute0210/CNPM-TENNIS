@@ -2,6 +2,8 @@ package view;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import dao.CourtDAO;
@@ -111,12 +113,11 @@ public class SearchCourtFrm extends JFrame {
                     return;
                 }
 
-                // Thu thập TẤT CẢ các sân được tích checkbox
                 List<BookedCourt> selectedBookedCourts = new ArrayList<>();
                 String daysOfWeek = buildDaysOfWeek();
                 String timeSlot = (String) cmbTimeSlot.getSelectedItem();
-                java.time.LocalDate startLocal = new java.sql.Date(dtStartDate.getDate().getTime()).toLocalDate();
-                java.time.LocalDate endLocal   = new java.sql.Date(dtEndDate.getDate().getTime()).toLocalDate();
+                LocalDate startLocal = new Date(dtStartDate.getDate().getTime()).toLocalDate();
+                LocalDate endLocal   = new Date(dtEndDate.getDate().getTime()).toLocalDate();
 
                 for (int i = 0; i < tblResult.getRowCount(); i++) {
                     Boolean isChecked = (Boolean) tblResult.getValueAt(i, 5);
@@ -139,7 +140,6 @@ public class SearchCourtFrm extends JFrame {
                     return;
                 }
 
-                // Chuyển sang BookingSessionView với danh sách nhiều sân
                 new BookingSessionView(selectedBookedCourts, user);
                 dispose();
             }

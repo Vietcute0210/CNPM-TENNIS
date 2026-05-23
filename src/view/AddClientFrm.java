@@ -18,16 +18,13 @@ public class AddClientFrm extends JFrame {
     private JTextField txtEmail;
     private JTextField txtNote;
     private JButton btnAdd;
-    private JButton btnReset; // Nút Reset trong UI, ta sẽ dùng làm nút Back
+    private JButton btnReset;
 
     private ClientInforFrm parentFrm;
     private User user;
     private List<BookedCourt> bookedCourts;
     private boolean addedSuccessfully = false;
 
-    /**
-     * Constructor khi mở từ ClientInforFrm (exception 16: KH chưa có trong hệ thống)
-     */
     public AddClientFrm(ClientInforFrm parent, User user, List<BookedCourt> bookedCourts) {
         this.parentFrm = parent;
         this.user = user;
@@ -39,7 +36,6 @@ public class AddClientFrm extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Đổi tên nút Reset thành Back theo yêu cầu 1
         if (btnReset != null) {
             btnReset.setText("Back");
         }
@@ -57,8 +53,7 @@ public class AddClientFrm extends JFrame {
                 }
 
                 ClientDAO dao = new ClientDAO();
-                
-                // Nghiệp vụ 2: kiểm tra trùng lặp số điện thoại
+
                 if (dao.checkDuplicatePhone(tel)) {
                     JOptionPane.showMessageDialog(AddClientFrm.this,
                             "Số điện thoại này đã tồn tại trên hệ thống!\nVui lòng nhập số khác hoặc quay lại tìm kiếm.",
@@ -77,8 +72,7 @@ public class AddClientFrm extends JFrame {
                     addedSuccessfully = true; // Đánh dấu thêm thành công để không hiện lại màn chọn
                     JOptionPane.showMessageDialog(AddClientFrm.this,
                             "Thêm khách hàng \"" + name + "\" thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                    
-                    // Nghiệp vụ 3: Đóng màn thêm KH và chuyển sang màn xác nhận confirm luôn
+
                     dispose();
                     if (parentFrm != null) {
                         parentFrm.proceedWithClient(client);
@@ -90,7 +84,6 @@ public class AddClientFrm extends JFrame {
             }
         });
 
-        // Nghiệp vụ 1: Nút Back để đóng màn thêm KH và hiện lại màn chọn KH
         if (btnReset != null) {
             btnReset.addActionListener(new ActionListener() {
                 @Override
@@ -100,7 +93,6 @@ public class AddClientFrm extends JFrame {
             });
         }
 
-        // Khi đóng AddClientFrm mà KHÔNG thêm thành công -> hiện lại ClientInforFrm
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosed(java.awt.event.WindowEvent e) {
@@ -113,7 +105,6 @@ public class AddClientFrm extends JFrame {
         setVisible(true);
     }
 
-    // Constructor độc lập để test
     public AddClientFrm() {
         setContentPane(mainPanel);
         setTitle("AddClientView");

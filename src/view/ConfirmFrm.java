@@ -54,15 +54,14 @@ public class ConfirmFrm extends JFrame {
             sb.append("-".repeat(80)).append("\n");
             sb.append(String.format("Tổng số buổi    : %d buổi\n", totalSessions));
 
-            // Tính toán tài chính đúng:
-            // grossPerCourt = price/h * hours * sessions (chưa có discount sân hay phiếu)
+            // Tính tiền
             double gross = 0;
             for (BookedCourt bc : slip.getBookedCourts()) {
                 gross += bc.getPrice() * bc.getDurationHours() * bc.getSessions().size();
             }
-            double slipDiscount = gross * slip.getSelloff();      // khuyến mại tổng phiếu
-            double afterDiscount = gross - slipDiscount;           // thành tiền
-            double deposit = slip.getDeposit();                    // cọc 10%
+            double slipDiscount = gross * slip.getSelloff();
+            double afterDiscount = gross - slipDiscount;
+            double deposit = slip.getDeposit();
 
             sb.append(String.format("Tổng tiền gốc   : %,.0f đ\n", gross));
             sb.append(String.format("Khuyến mại (%.0f%%): %,.0f đ\n", slip.getSelloff() * 100, slipDiscount));
@@ -84,7 +83,6 @@ public class ConfirmFrm extends JFrame {
             }
         });
 
-        // Cancel -> quay về màn hình chính (exception 20)
         btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

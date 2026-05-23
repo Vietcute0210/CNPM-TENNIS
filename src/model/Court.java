@@ -9,8 +9,7 @@ public class Court implements Serializable {
     private String description;
     private String status;
     private CourtChain courtChain;
-    
-    // Thuộc tính bổ sung để chứa thông tin hiển thị (VD: Tổng số buổi)
+
     private int availableSessionsCount;
 
     public Court() {

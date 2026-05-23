@@ -25,7 +25,6 @@ public class PaymentFrm extends JFrame {
         setLocationRelativeTo(null);
 
         if (lblDeposit != null) {
-            // Tiền cọc gọi trực tiếp hàm getDeposit() từ model
             double amount = (slip != null) ? slip.getDeposit() : 0;
             lblDeposit.setText(String.format("%,.0f VNĐ", amount));
             lblDeposit.setForeground(java.awt.Color.RED);
@@ -45,7 +44,7 @@ public class PaymentFrm extends JFrame {
                     BookingSlipDAO slipDao = new BookingSlipDAO();
                     if (slipDao.addBookingSlip(bookingSlip)) {
                         
-                        // Sau khi lưu BookingSlip thành công -> Tạo và lưu DepositBill (hoá đơn đặt cọc)
+                        // Sau khi lưu BookingSlip thành công -> Tạo và lưu DepositBill
                         DepositBill db = new DepositBill();
                         db.setCreatedDate(java.time.LocalDate.now());
                         db.setDeposit(bookingSlip.getDeposit());

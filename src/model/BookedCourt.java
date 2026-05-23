@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -10,8 +11,8 @@ public class BookedCourt implements Serializable {
     private int id;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String daysOfWeek; // VD: "Thứ 3, Thứ 5"
-    private String timeSlot; // VD: "19:00 - 21:00"
+    private String daysOfWeek;
+    private String timeSlot;
     private double price;
     private double sellOff;
     private Court court;
@@ -35,12 +36,7 @@ public class BookedCourt implements Serializable {
         this.bookingSlip = bookingSlip;
         this.sessions = new ArrayList<>();
     }
-    
-    /**
-     * Hàm xử lý nghiệp vụ tự động sinh danh sách các phiên đặt sân dựa vào 
-     * khoảng thời gian (startDate, endDate), các ngày trong tuần (daysOfWeek)
-     * và khung giờ (timeSlot).
-     */
+
     public void generateSessions() {
         sessions.clear();
         if (startDate == null || endDate == null || daysOfWeek == null || timeSlot == null) {
@@ -77,9 +73,6 @@ public class BookedCourt implements Serializable {
         }
     }
 
-    /**
-     * Tính số giờ của mỗi buổi từ timeSlot. VD: "19:00 - 21:00" -> 2.0
-     */
     public double getDurationHours() {
         if (timeSlot == null) return 0;
         String[] parts = timeSlot.split(" - ");
@@ -87,7 +80,7 @@ public class BookedCourt implements Serializable {
         try {
             LocalTime start = LocalTime.parse(parts[0].trim());
             LocalTime end   = LocalTime.parse(parts[1].trim());
-            return java.time.Duration.between(start, end).toMinutes() / 60.0;
+            return Duration.between(start, end).toMinutes() / 60.0;
         } catch (Exception e) {
             return 0;
         }

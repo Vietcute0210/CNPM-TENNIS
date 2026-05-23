@@ -5,10 +5,10 @@ import model.CourtChain;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CourtDAO extends DAO {
     public CourtDAO() {
@@ -19,19 +19,16 @@ public class CourtDAO extends DAO {
         List<Court> list = new ArrayList<>();
         
         // Chuyển đổi Date sang LocalDate để tính toán số buổi
-        LocalDate start = new java.sql.Date(startDate.getTime()).toLocalDate();
-        LocalDate end = new java.sql.Date(endDate.getTime()).toLocalDate();
-        
-        // Tính tổng số buổi lý thuyết yêu cầu
+        LocalDate start = new Date(startDate.getTime()).toLocalDate();
+        LocalDate end = new Date(endDate.getTime()).toLocalDate();
+
         int totalRequestedSessions = calculateTotalSessions(start, end, daysOfWeek);
-        
-        // Query cơ bản: Lấy tất cả các sân
-        // Trong thực tế, cần left join với bảng BookedCourt và BookingSession 
-        // để lọc các sân bị trùng lịch. Để đơn giản cho chức năng demo, 
-        // giả sử chúng ta tìm sân chưa bị đặt trùng toàn bộ khoảng thời gian.
-        String sql = "SELECT c.*, cc.name AS chainName, cc.address AS chainAddress "
-                   + "FROM tblCourt c "
-                   + "JOIN tblCourtChain cc ON c.tblCourtChainID = cc.id";
+
+        String sql = """
+                SELECT c.*, cc.name AS chainName, cc.address AS chainAddress
+                FROM tblCourt c
+                JOIN tblCourtChain cc ON c.tblCourtChainID = cc.id
+                """;
                    
         try {
             PreparedStatement ps = con.prepareStatement(sql);
@@ -45,8 +42,7 @@ public class CourtDAO extends DAO {
                 court.setDescription(rs.getString("description"));
                 court.setStatus(rs.getString("status"));
                 court.setCourtChain(cc);
-                
-                // Demo logic: Check collision in tblBookingSession
+
                 int bookedCount = getBookedSessionCount(court.getId(), startDate, endDate, daysOfWeek, timeSlot);
                 int availableCount = totalRequestedSessions - bookedCount;
                 
@@ -65,17 +61,19 @@ public class CourtDAO extends DAO {
         int count = 0;
         String[] times = timeSlot.split(" - ");
         if(times.length != 2) return 0;
-        String sql = "SELECT s.date FROM tblBookingSession s "
-                   + "JOIN tblBookedCourt bc ON s.tblBookedCourtID = bc.id "
-                   + "WHERE bc.tblCourtID = ? AND s.date >= ? AND s.date <= ? "
-                   + "AND s.startTime = ? AND s.endTime = ? AND s.status != 'Đã hủy'";
+        String sql = """
+                SELECT s.date FROM tblBookingSession s
+                JOIN tblBookedCourt bc ON s.tblBookedCourtID = bc.id
+                WHERE bc.tblCourtID = ? AND s.date >= ? AND s.date <= ?
+                AND s.startTime = ? AND s.endTime = ? AND s.status != 'Đã hủy'
+                """;
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, courtId);
-            ps.setDate(2, new java.sql.Date(startDate.getTime()));
-            ps.setDate(3, new java.sql.Date(endDate.getTime()));
-            ps.setTime(4, java.sql.Time.valueOf(times[0].trim() + ":00"));
-            ps.setTime(5, java.sql.Time.valueOf(times[1].trim() + ":00"));
+            ps.setDate(2, new Date(startDate.getTime()));
+            ps.setDate(3, new Date(endDate.getTime()));
+            ps.setTime(4, Time.valueOf(times[0].trim() + ":00"));
+            ps.setTime(5, Time.valueOf(times[1].trim() + ":00"));
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 LocalDate date = rs.getDate("date").toLocalDate();

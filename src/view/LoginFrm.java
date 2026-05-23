@@ -31,9 +31,8 @@ public class LoginFrm extends JFrame {
                 
                 UserDAO userDAO = new UserDAO();
                 if (userDAO.checkLogin(user)) {
-                    // Hiển thị ReceptHomeFrm sau khi đăng nhập thành công
                     new ReceptHomeFrm(user);
-                    dispose(); // Đóng form đăng nhập
+                    dispose(); // Đóng form đăng nhập sau khi đăng nhập thành công
                 } else {
                     JOptionPane.showMessageDialog(LoginFrm.this, "Tài khoản hoặc mật khẩu không đúng!");
                 }

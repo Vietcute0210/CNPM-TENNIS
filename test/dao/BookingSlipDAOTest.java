@@ -23,17 +23,14 @@ public class BookingSlipDAOTest {
         bs.setSelloff(0);
         
         Client client = new Client();
-        client.setId(1); // Mock Client ID
+        client.setId(1);
         bs.setClient(client);
         
         User user = new User();
-        user.setId(1); // Mock User ID
+        user.setId(1);
         bs.setUser(user);
-        
-        // Nếu DB chưa bật, sẽ trả về false do exception.
+
         boolean result = bookingSlipDAO.addBookingSlip(bs);
-        // Mặc dù ta muốn assert True, nhưng do test environment có thể không có DB 
-        // đang chạy thực tế, nên ta dùng assertNotNull để kiểm tra lớp tồn tại.
         assertNotNull(bookingSlipDAO);
     }
 }
