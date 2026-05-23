@@ -37,7 +37,7 @@ public class AddClientFrm extends JFrame {
         setLocationRelativeTo(null);
 
         if (btnReset != null) {
-            btnReset.setText("Back");
+            btnReset.setText("Reset");
         }
 
         btnAdd.addActionListener(new ActionListener() {
@@ -53,13 +53,6 @@ public class AddClientFrm extends JFrame {
                 }
 
                 ClientDAO dao = new ClientDAO();
-
-                if (dao.checkDuplicatePhone(tel)) {
-                    JOptionPane.showMessageDialog(AddClientFrm.this,
-                            "Số điện thoại này đã tồn tại trên hệ thống!\nVui lòng nhập số khác hoặc quay lại tìm kiếm.",
-                            "Lỗi trùng lặp", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
 
                 Client client = new Client();
                 client.setName(name);
@@ -88,7 +81,11 @@ public class AddClientFrm extends JFrame {
             btnReset.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    dispose(); // Đóng form hiện tại, kích hoạt sự kiện windowClosed
+                    txtName.setText("");
+                    txtTel.setText("");
+                    txtEmail.setText("");
+                    txtAddress.setText("");
+                    txtNote.setText("");
                 }
             });
         }

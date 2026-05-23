@@ -14,13 +14,7 @@ public class ClientDAO extends DAO {
 
     public List<Client> searchByName(String name) {
         List<Client> list = new ArrayList<>();
-        String sql = """
-                SELECT c.*, COUNT(bs.id) AS bookingCount
-                FROM tblClient c
-                LEFT JOIN tblBookingSlip bs ON c.id = bs.tblClientID
-                WHERE c.name LIKE ?
-                GROUP BY c.id
-                """;
+        String sql = "SELECT * FROM tblClient WHERE name LIKE ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, "%" + name + "%");
@@ -33,7 +27,7 @@ public class ClientDAO extends DAO {
                 client.setEmail(rs.getString("email"));
                 client.setAddress(rs.getString("address"));
                 client.setNote(rs.getString("note"));
-                client.setBookingCount(rs.getInt("bookingCount"));
+
                 list.add(client);
             }
         } catch (Exception e) {
@@ -64,18 +58,4 @@ public class ClientDAO extends DAO {
         return false;
     }
 
-    public boolean checkDuplicatePhone(String tel) {
-        String sql = "SELECT id FROM tblClient WHERE tel = ?";
-        try {
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, tel);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 }

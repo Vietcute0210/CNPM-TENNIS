@@ -12,7 +12,6 @@ public class LoginFrm extends JFrame {
     private JTextField txtUsername;
     private JPasswordField txtPassword;
     private JButton btnLogin;
-    private JButton btnCancel;
 
     public LoginFrm() {
         setContentPane(mainPanel);
@@ -39,12 +38,6 @@ public class LoginFrm extends JFrame {
             }
         });
 
-        btnCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
 
         setVisible(true);
     }

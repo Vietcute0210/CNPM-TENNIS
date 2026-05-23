@@ -18,7 +18,6 @@ public class ClientInforFrm extends JFrame {
     private JButton btnSearch;
     private JButton btnAdd;
     private JTable tblResult;
-    private JButton btnSelect;
 
     private User user;
     private List<BookedCourt> bookedCourts;
@@ -36,7 +35,7 @@ public class ClientInforFrm extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        String[] columns = {"Client ID", "Full Name", "Phone", "Email", "History"};
+        String[] columns = {"Client ID", "Full Name", "Phone", "Email", "Note"};
         tblResult.setModel(new DefaultTableModel(new Object[0][5], columns) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -68,7 +67,7 @@ public class ClientInforFrm extends JFrame {
                                 c.getName(),
                                 c.getTel(),
                                 c.getEmail(),
-                                c.getBookingCount() + " lần"
+                                c.getNote()
                         });
                     }
                 }
@@ -80,19 +79,6 @@ public class ClientInforFrm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
                 new AddClientFrm(ClientInforFrm.this, user, bookedCourts);
-            }
-        });
-
-        btnSelect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = tblResult.getSelectedRow();
-                if (selectedRow < 0 || currentClients == null || currentClients.isEmpty()) {
-                    JOptionPane.showMessageDialog(ClientInforFrm.this,
-                            "Vui lòng chọn một khách hàng trong danh sách!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                proceedWithClient(currentClients.get(selectedRow));
             }
         });
 

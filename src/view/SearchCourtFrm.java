@@ -1,5 +1,6 @@
 package view;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
@@ -34,6 +35,19 @@ public class SearchCourtFrm extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
+
+        // Khởi tạo bảng với tên cột ban đầu
+        String[] columns = {"Court Name", "Status", "Price/h", "Total Sessions", "Description", "Select"};
+        tblResult.setModel(new DefaultTableModel(new Object[0][6], columns) {
+            @Override
+            public Class<?> getColumnClass(int col) {
+                return col == 5 ? Boolean.class : String.class;
+            }
+            @Override
+            public boolean isCellEditable(int row, int col) {
+                return col == 5;
+            }
+        });
 
         if (cmbTimeSlot != null) {
             cmbTimeSlot.addItem("07:00 - 09:00");
@@ -140,7 +154,7 @@ public class SearchCourtFrm extends JFrame {
                     return;
                 }
 
-                new BookingSessionView(selectedBookedCourts, user);
+                new ClientInforFrm(user, selectedBookedCourts);
                 dispose();
             }
         });
