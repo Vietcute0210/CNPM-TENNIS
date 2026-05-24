@@ -101,8 +101,8 @@ public class CourtDAO extends DAO {
         return count;
     }
 
-    private String getDayOfWeekString(int javaDayOfWeek) {
-        switch (javaDayOfWeek) {
+    private String getDayOfWeekString(int DayOfWeek) {
+        switch (DayOfWeek) {
             case 1: return "Thứ 2";
             case 2: return "Thứ 3";
             case 3: return "Thứ 4";

@@ -7,6 +7,8 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.toedter.calendar.JDateChooser;
 import dao.CourtDAO;
 import model.Court;
 import model.BookedCourt;
@@ -14,8 +16,8 @@ import model.User;
 
 public class SearchCourtFrm extends JFrame {
     private JPanel mainPanel;
-    private com.toedter.calendar.JDateChooser dtStartDate;
-    private com.toedter.calendar.JDateChooser dtEndDate;
+    private JDateChooser dtStartDate;
+    private JDateChooser dtEndDate;
     private JComboBox<String> cmbTimeSlot;
     private JCheckBox chkT2, chkT3, chkT4, chkT5, chkT6, chkT7, chkCN;
     private JButton btnSearch;
@@ -67,16 +69,7 @@ public class SearchCourtFrm extends JFrame {
                 java.util.Date endDate = dtEndDate.getDate();
                 String timeSlot = (String) cmbTimeSlot.getSelectedItem();
 
-                StringBuilder days = new StringBuilder();
-                if(chkT2.isSelected()) days.append("Thứ 2, ");
-                if(chkT3.isSelected()) days.append("Thứ 3, ");
-                if(chkT4.isSelected()) days.append("Thứ 4, ");
-                if(chkT5.isSelected()) days.append("Thứ 5, ");
-                if(chkT6.isSelected()) days.append("Thứ 6, ");
-                if(chkT7.isSelected()) days.append("Thứ 7, ");
-                if(chkCN.isSelected()) days.append("Chủ nhật, ");
-
-                String daysOfWeek = days.toString();
+                String daysOfWeek = buildDaysOfWeek();
 
                 if (startDate == null || endDate == null) {
                     JOptionPane.showMessageDialog(SearchCourtFrm.this, "Vui lòng chọn ngày bắt đầu và kết thúc!");
@@ -95,27 +88,18 @@ public class SearchCourtFrm extends JFrame {
                             "Không tìm thấy", JOptionPane.INFORMATION_MESSAGE);
                 }
 
-                Object[][] newData = new Object[currentCourts.size()][6];
-                for(int i=0; i<currentCourts.size(); i++) {
-                    Court c = currentCourts.get(i);
-                    newData[i][0] = c.getName();
-                    newData[i][1] = c.getStatus();
-                    newData[i][2] = String.format("%,.0fđ", c.getPrice());
-                    newData[i][3] = String.valueOf(c.getAvailableSessionsCount());
-                    newData[i][4] = c.getDescription();
-                    newData[i][5] = false; // checkbox chưa chọn
+                DefaultTableModel model = (DefaultTableModel) tblResult.getModel();
+                model.setRowCount(0);
+                for (Court c : currentCourts) {
+                    model.addRow(new Object[]{
+                            c.getName(),
+                            c.getStatus(),
+                            String.format("%,.0fđ", c.getPrice()),
+                            String.valueOf(c.getAvailableSessionsCount()),
+                            c.getDescription(),
+                            false
+                    });
                 }
-                String[] columns = {"Court Name", "Status", "Price/h", "Total Sessions", "Description", "Select"};
-                tblResult.setModel(new javax.swing.table.DefaultTableModel(newData, columns) {
-                    @Override
-                    public Class<?> getColumnClass(int col) {
-                        return col == 5 ? Boolean.class : String.class;
-                    }
-                    @Override
-                    public boolean isCellEditable(int row, int col) {
-                        return col == 5;
-                    }
-                });
             }
         });
 
@@ -139,7 +123,7 @@ public class SearchCourtFrm extends JFrame {
                         Court court = currentCourts.get(i);
                         BookedCourt bc = new BookedCourt();
                         bc.setCourt(court);
-                        bc.setPrice(court.getPrice()); // Lấy giá từ sân
+                        bc.setPrice(court.getPrice());
                         bc.setStartDate(startLocal);
                         bc.setEndDate(endLocal);
                         bc.setTimeSlot(timeSlot);

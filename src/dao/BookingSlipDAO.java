@@ -71,7 +71,7 @@ public class BookingSlipDAO extends DAO {
             result = true;
         } catch (Exception e) {
             try {
-                con.rollback(); // Rollback nếu có lỗi
+                con.rollback();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

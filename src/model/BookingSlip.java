@@ -76,13 +76,9 @@ public class BookingSlip implements Serializable {
         if (bookedCourts == null || bookedCourts.isEmpty()) {
             return 0.0;
         }
-        // Lấy sân đầu tiên để đại diện (do các sân được đặt cùng khoảng thời gian trong luồng)
+        // Lấy 1 sân đầu để đại diện
         BookedCourt bc = bookedCourts.get(0);
-        if (bc.getStartDate() == null || bc.getEndDate() == null) {
-            return 0.0;
-        }
-        
-        // Tính số tháng thuê dương lịch bao phủ
+
         long months = ChronoUnit.MONTHS.between(bc.getStartDate(), bc.getEndDate().plusDays(1));
         if (months >= 3) {
             return 0.15;

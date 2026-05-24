@@ -6,6 +6,8 @@ import model.User;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class BookingSlipDAOTest {
@@ -19,7 +21,7 @@ public class BookingSlipDAOTest {
     @Test
     public void testAddBookingSlip() {
         BookingSlip bs = new BookingSlip();
-        bs.setBookingDay(java.time.LocalDate.now());
+        bs.setBookingDay(LocalDate.now());
         bs.setSelloff(0);
         
         Client client = new Client();

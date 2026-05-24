@@ -10,8 +10,6 @@ public class Client implements Serializable {
     private String address;
     private String note;
 
-    private int bookingCount;
-
     public Client() {
         super();
     }
@@ -72,13 +70,5 @@ public class Client implements Serializable {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public int getBookingCount() {
-        return bookingCount;
-    }
-
-    public void setBookingCount(int bookingCount) {
-        this.bookingCount = bookingCount;
     }
 }

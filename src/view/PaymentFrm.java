@@ -1,7 +1,10 @@
 package view;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+
 import model.BookingSlip;
 import model.DepositBill;
 import dao.BookingSlipDAO;
@@ -27,8 +30,8 @@ public class PaymentFrm extends JFrame {
         if (lblDeposit != null) {
             double amount = (slip != null) ? slip.getDeposit() : 0;
             lblDeposit.setText(String.format("%,.0f VNĐ", amount));
-            lblDeposit.setForeground(java.awt.Color.RED);
-            lblDeposit.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 14));
+            lblDeposit.setForeground(Color.RED);
+            lblDeposit.setFont(new Font("Arial", Font.BOLD, 14));
         }
 
         if (cmbPaymentMethod != null) {
@@ -46,7 +49,7 @@ public class PaymentFrm extends JFrame {
                         
                         // Sau khi lưu BookingSlip thành công -> Tạo và lưu DepositBill
                         DepositBill db = new DepositBill();
-                        db.setCreatedDate(java.time.LocalDate.now());
+                        db.setCreatedDate(LocalDate.now());
                         db.setDeposit(bookingSlip.getDeposit());
                         db.setPaymentMethod((String) cmbPaymentMethod.getSelectedItem());
                         db.setBookingSlip(bookingSlip);

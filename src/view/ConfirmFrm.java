@@ -1,5 +1,6 @@
 package view;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import model.BookedCourt;
@@ -55,15 +56,15 @@ public class ConfirmFrm extends JFrame {
             sb.append(String.format("Tổng số buổi    : %d buổi\n", totalSessions));
 
             // Tính tiền
-            double gross = 0;
+            double tien = 0;
             for (BookedCourt bc : slip.getBookedCourts()) {
-                gross += bc.getPrice() * bc.getDurationHours() * bc.getSessions().size();
+                tien += bc.getPrice() * bc.getDurationHours() * bc.getSessions().size();
             }
-            double slipDiscount = gross * slip.getSelloff();
-            double afterDiscount = gross - slipDiscount;
+            double slipDiscount = tien * slip.getSelloff();
+            double afterDiscount = tien - slipDiscount;
             double deposit = slip.getDeposit();
 
-            sb.append(String.format("Tổng tiền gốc   : %,.0f đ\n", gross));
+            sb.append(String.format("Tổng tiền gốc   : %,.0f đ\n", tien));
             sb.append(String.format("Khuyến mại (%.0f%%): %,.0f đ\n", slip.getSelloff() * 100, slipDiscount));
             sb.append(String.format("Thành tiền      : %,.0f đ\n", afterDiscount));
             sb.append(String.format("Cọc (10%%)       : %,.0f đ\n", deposit));
@@ -72,7 +73,7 @@ public class ConfirmFrm extends JFrame {
 
             taBookingSlip.setText(sb.toString());
             taBookingSlip.setEditable(false);
-            taBookingSlip.setFont(new java.awt.Font("Monospaced", java.awt.Font.PLAIN, 12));
+            taBookingSlip.setFont(new Font("Monospaced", Font.PLAIN, 12));
         }
 
         btnConfirm.addActionListener(new ActionListener() {

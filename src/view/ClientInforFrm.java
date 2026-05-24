@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.util.List;
 
 public class ClientInforFrm extends JFrame {
@@ -101,7 +102,7 @@ public class ClientInforFrm extends JFrame {
         BookingSlip slip = new BookingSlip();
         slip.setUser(this.user);
         slip.setClient(client);
-        slip.setBookingDay(java.time.LocalDate.now());
+        slip.setBookingDay(LocalDate.now());
         for (BookedCourt bc : this.bookedCourts) {
             slip.addBookedCourt(bc);
         }

@@ -8,7 +8,6 @@ import model.User;
 public class LoginFrm extends JFrame {
 
     private JPanel mainPanel;
-    private JLabel Username;
     private JTextField txtUsername;
     private JPasswordField txtPassword;
     private JButton btnLogin;
