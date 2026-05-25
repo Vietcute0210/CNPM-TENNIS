@@ -36,7 +36,7 @@ public class BookingSlipDAO extends DAO {
                 
                 // 2. Lưu các BookedCourt
                 for (BookedCourt bc : bs.getBookedCourts()) {
-                    bc.setSellOff(bs.getSelloff()); // Đồng bộ tỷ lệ khuyến mại động từ phiếu vào từng sân đặt
+                    bc.setSellOff(bs.getSelloff());
                     String sqlCourt = "INSERT INTO tblBookedCourt (startDate, endDate, price, sellOff, daysOfWeek, timeSlot, tblCourtID, tblBookingSlipID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                     PreparedStatement psCourt = con.prepareStatement(sqlCourt, Statement.RETURN_GENERATED_KEYS);
                     psCourt.setDate(1, Date.valueOf(bc.getStartDate()));
