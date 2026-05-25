@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientInforFrm extends JFrame {
@@ -111,6 +112,6 @@ public class ClientInforFrm extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ClientInforFrm(new User(), new java.util.ArrayList<>());
+        new ClientInforFrm(new User(), new ArrayList<>());
     }
 }
