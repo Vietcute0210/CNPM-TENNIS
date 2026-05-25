@@ -18,9 +18,9 @@ public class BookingSlipDAO extends DAO {
     public boolean addBookingSlip(BookingSlip bs) {
         boolean result = false;
         try {
-            con.setAutoCommit(false); // Bắt đầu transaction
+            con.setAutoCommit(false); // Bắt đầu tran
             
-            // 1. Lưu BookingSlip
+            // Lưu BookingSlip
             String sqlSlip = "INSERT INTO tblBookingSlip (bookingDay, sellOff, note, tblClientID, tblUserID) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement psSlip = con.prepareStatement(sqlSlip, Statement.RETURN_GENERATED_KEYS);
             psSlip.setDate(1, Date.valueOf(bs.getBookingDay()));
@@ -34,7 +34,7 @@ public class BookingSlipDAO extends DAO {
             if (rsSlip.next()) {
                 bs.setId(rsSlip.getInt(1));
                 
-                // 2. Lưu các BookedCourt
+                // Lưu BookedCourt
                 for (BookedCourt bc : bs.getBookedCourts()) {
                     bc.setSellOff(bs.getSelloff());
                     String sqlCourt = "INSERT INTO tblBookedCourt (startDate, endDate, price, sellOff, daysOfWeek, timeSlot, tblCourtID, tblBookingSlipID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -53,7 +53,7 @@ public class BookingSlipDAO extends DAO {
                     if (rsCourt.next()) {
                         bc.setId(rsCourt.getInt(1));
                         
-                        // 3. Lưu các BookingSession
+                        // Lưu BookingSession
                         for (BookingSession session : bc.getSessions()) {
                             String sqlSession = "INSERT INTO tblBookingSession (date, startTime, endTime, status, tblBookedCourtID) VALUES (?, ?, ?, ?, ?)";
                             PreparedStatement psSession = con.prepareStatement(sqlSession);
@@ -67,7 +67,7 @@ public class BookingSlipDAO extends DAO {
                     }
                 }
             }
-            con.commit(); // Hoàn thành transaction
+            con.commit(); // Xong trans
             result = true;
         } catch (Exception e) {
             try {
